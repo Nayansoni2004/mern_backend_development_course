@@ -9,6 +9,8 @@ const db_config = require("./configs/db.config")
 const user_model = require("./models/user.model")
 const bcrypt = require('bcryptjs')
 
+app.use(express.json())  //it is middle-ware which converts json object into js object
+
 /**
  * Create an admin user at the starting of the application
  * if not already present
@@ -53,6 +55,12 @@ async function init() {
         console.log('Error while creating admin', err);
     }
 }
+
+/**
+ * Stich the route to the server
+ * that is calling routes and passing app object
+ */
+require('./routes/auth.routes')(app)
 
 /**
  * Start the server
