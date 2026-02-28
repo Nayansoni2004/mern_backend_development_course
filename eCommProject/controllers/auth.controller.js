@@ -25,7 +25,15 @@ exports.signup = async (request, response)=>{
         /**
          * Return this user
          */
-        response.staus(201).send(user_created) //201 indicates that something has been successfully created
+        const resp_obj = {
+            name : user_created.name,
+            userId : user_created.userId,
+            email : user_created.email,
+            userType : user_created.userType,
+            createdAt : user_created.createdAt,
+            updatedAt : user_created.updatedAt
+        }
+        response.status(201).send(resp_obj) //201 indicates that something has been successfully created
     } catch(err) {
         console.log('Error while registering the user', err)
         response.status(500).send({ //status code 500 means internal server error while registering user
