@@ -4,7 +4,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
-const server_config = require("./configs/server.config")
+const server_config = require("./configs/server.config") //set port num to start the server, in external file(configs) folder
 const db_config = require("./configs/db.config")
 const user_model = require("./models/user.model")
 const bcrypt = require('bcryptjs')
