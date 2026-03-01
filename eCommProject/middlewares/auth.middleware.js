@@ -43,6 +43,31 @@ const verifySignupBody = async(req, resp, next) => {
     }
 }
 
+
+
+
+/**
+ * Validation at signin
+ */
+const verifySigninBody = async(req, resp, next) => {
+    
+    if(!req.body.userId) {
+        return resp.status(400).send({
+            message : "userId is not provided"
+        })
+    }
+
+    if(!req.body.password) {
+        return resp.status(400).send({
+            message : "password is not provided"
+        })
+    }
+
+    next(); //if everything in req. body is accurate
+}
+
+
 module.exports = {
-    verifySignupBody : verifySignupBody
+    verifySignupBody : verifySignupBody,
+    verifySigninBody : verifySigninBody
 }
