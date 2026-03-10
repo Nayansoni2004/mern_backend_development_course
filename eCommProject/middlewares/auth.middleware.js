@@ -2,6 +2,8 @@
  * Create a middleware that check if the request body is proper and correct
  */
 const user_model = require('../models/user.model')
+const jwt = require('jsonwebtoken')
+const auth_config = require('../configs/auth.config')
 
 const verifySignupBody = async(req, resp, next) => {
     try {
@@ -67,7 +69,55 @@ const verifySigninBody = async(req, resp, next) => {
 }
 
 
+const verifyToken = (request, response, next)=>{
+    //Check if the token is present in the header
+    const token = request.headers['x-access-token']
+
+    if(!token) {
+        return response.status(403).send({
+            message : "No token found : unAuthorized"
+        })
+    }
+
+    //If it's the valid token
+    jwt.verify(token, auth_config.secret, async (err, decoded)=>{
+        if(err) {
+            return response.status(401).send({
+                message : "UnAuthorized !"
+            })
+        }
+        const user = await user_model.findOne({userId : decoded.id})
+        if(!user) {
+            return response.status(400).send({
+                message : "UnAuthorized, this user for this token doesn't exists"
+            })
+        }
+        //set the user info in the req body
+        request.user = user
+        
+        //Then move to the next step
+        next()
+    })
+
+}
+
+/**
+ * Allow only admin to add new category, customer should'nt be allowed.
+ */
+const isAdmin = (request, response, next)=>{
+    const user = request.user
+    if(user && user.userType == 'ADMIN') {
+        next()
+    } else {
+        return response.status(403).send({
+            message : 'Only ADMIN users are allowed to access this endpoint'
+        })
+    }
+}
+
 module.exports = {
     verifySignupBody : verifySignupBody,
-    verifySigninBody : verifySigninBody
+    verifySigninBody : verifySigninBody,
+    verifyToken : verifyToken,
+    isAdmin : isAdmin
 }
